@@ -1,0 +1,3 @@
+#include <stdio.h> 
+#include <stdlib.h> 
+int main(){int i, j, count=0, isnprime=0, *minmax = (int*)malloc(sizeof(int)*2);scanf("%d%d", &minmax[0], &minmax[1]);int *primearry = (int*)calloc(minmax[1],sizeof(int));for(i=2;i<=minmax[1];(i==2)?(i++):(i+=2)){isnprime=0;for(j=0;j<minmax[1];j++) {if(i%primearry[j] == 0 && primearry[j] != 0){isnprime=1; break;}}if(isnprime == 1){continue;}for(j=0;j<minmax[1];j++) {if(primearry[j] == 0){primearry[j]=i;break;}}if(i>=minmax[0]&&i<=minmax[1]){printf("%d ", i); count++;}}if(count==0){printf("None.");}printf("\n");free(minmax);free(primearry);return 0;}

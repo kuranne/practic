@@ -1,0 +1,1 @@
+print(min(x:=[int(input())for _ in range(int(input()))]), max(x), sep="\n")
