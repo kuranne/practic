@@ -1,0 +1,4 @@
+phonenumbers
+opencage
+folium
+flask

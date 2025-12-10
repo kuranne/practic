@@ -1,0 +1,1 @@
+print(" ".join(map(str, sorted(f := list(iter(lambda: int(input()), 0)), reverse= True if input().lower() == "max" else False))))
