@@ -27,4 +27,4 @@ members = [
 	"wordchain",
 	"wordsecond",
 	"x1x2"
-, "dice", "bee"]
+, "dice", "bee", "skyline"]
