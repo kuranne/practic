@@ -28,3 +28,4 @@ members = [
 	"wordsecond",
 	"x1x2"
 , "dice", "bee", "skyline"]
+exclude = []
