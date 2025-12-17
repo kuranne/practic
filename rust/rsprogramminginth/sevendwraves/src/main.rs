@@ -17,30 +17,39 @@ fn parse_usize(data: &String) -> Result<Vec<usize>, ParseIntError> {
 fn main() -> Result<(), Box<dyn::std::error::Error>> {
     let mut stdin = io::stdin().lock();
     let mut input = String::with_capacity(128);
-    
-    match rsin(&mut stdin, &mut input) {
-        Ok(()) => {input = input.trim().to_string();},
-        Err(e) => {eprintln!("Failed to read stdin: {e}")} 
-    }
+    loop {
+        match rsin(&mut stdin, &mut input) {
+            Ok(()) => {input = input.trim().to_string(); if input.is_empty() {continue}},
+            Err(e) => {eprintln!("Failed to read stdin: {e}")} 
+        }
 
-    let mut dwraves: Vec<usize> = Vec::new();
-    match parse_usize(&input) {
-        Ok(res) => {dwraves = res;},
-        Err(e) => eprintln!("Failed to: {e}")
-    }
+        let mut dwraves: Vec<usize> = Vec::new();
+        match parse_usize(&input) {
+            Ok(res) => {dwraves = res;},
+            Err(e) => eprintln!("Failed to: {e}")
+        }
 
-    let target: usize = dwraves.iter().sum::<usize>() - 100usize;
-
-    'lvl1 : for x1 in dwraves.clone() {
-        for x2 in dwraves.clone() {
-            if x1 + x2 == target {
-               dwraves.retain(|&x| x != x1 && x != x2);
-               break 'lvl1;
+        if !dwraves.is_empty() {
+            let mut target: usize = dwraves.iter().sum::<usize>();
+            if target > 100 {
+                target -= 100usize;
+                'lvl1 : for x1 in dwraves.clone() {
+                    for x2 in dwraves.clone() {
+                        if x1 + x2 == target {
+                           dwraves.retain(|&x| x != x1 && x != x2);
+                           break 'lvl1;
+                        }
+                    }
+                }
+                println!("{}", dwraves.iter().map(|x| x.to_string()).collect::<Vec<String>>().join("\n"));
+            } else {
+                eprintln!("The Number not more than 100");
             }
+            break;
+        } else {
+            println!("Please input some int");
         }
     }
-
-    println!("{}", dwraves.iter().map(|x| x.to_string()).collect::<Vec<String>>().join("\n"));
 
     Ok(())
 }

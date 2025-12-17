@@ -27,5 +27,5 @@ members = [
 	"wordchain",
 	"wordsecond",
 	"x1x2"
-, "dice", "bee", "skyline", "sevendwraves"]
+, "dice", "bee", "skyline", "sevendwraves", "jelly", "sevensegment"]
 exclude = []
