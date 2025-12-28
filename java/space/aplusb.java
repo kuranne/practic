@@ -1,6 +1,6 @@
 import java.util.Scanner;
 
-public class AplusB {
+public class aplusb {
     public static void main(String[] args) {
         Scanner jvin = new Scanner(System.in);
 

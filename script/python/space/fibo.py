@@ -5,4 +5,4 @@ def fibo(n):
         return 1
     
 if __name__ == "__main__":
-        print(fibo(10))
+        print(fibo(int(input())))
