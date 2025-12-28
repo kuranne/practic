@@ -1,145 +1,108 @@
 #!/usr/bin/env python3
-# Author: Kuranne Maisa
-# Language: Python
-# Version of Language: 3.14.2t
-
 import os
 import subprocess as spc
 import argparse
+import sys
+from pathlib import Path
+from typing import List
 
-# Compile c & c++
-def compile_action(cmd):
-    if spc.run(cmd).returncode != 0:
-        return False
-    return True
+class CompilerRunner:
+    def __init__(self):
+        self.is_posix = os.name == "posix"
+        self.output_files: List[Path] = []
 
-# Select Compiler for c/c++
-def compiler(extension):
-    return "gcc" if extension == ".c" else "g++"
+    def get_executable_path(self, source_path: Path) -> Path:
+        # Create PATH for OS
+        name = source_path.stem
+        return Path(f"./{name}.out" if self.is_posix else f"{name}.exe")
 
-# I do this for when I use in Windows... , no maybe not. Should I delete this?
-def name_out(name):
-    return f"./{name}.out" if os.name == "posix" else f".\\{name}.out"
+    def run_command(self, cmd: List[str]) -> bool:
+        # Execute command & error
+        try:
+            result = spc.run(cmd, check=False)
+            return result.returncode == 0
+        except FileNotFoundError:
+            print(f"Error: Command '{cmd[0]}' not found.")
+            return False
 
-# Complie multi files of c or c++ file
-# Seem like gcc || g++ name name2 -I header -o name.out
-def multi_file_compile(args):
-    
-    # Split between source files and header files
-    cfiles = [f for f in args.files if f.endswith(('.c', 'cpp', '.cc'))]
-    hfiles = [f for f in args.files if f.endswith(('hpp', '.h'))]
-    if not cfiles:
-        print("File not provided")
-        return None
-    
-    # Spilt first filename into name and extension for out_name
-    name, extension = os.path.splitext(cfiles[0])
+    def compile_and_run(self, files: List[str], multi: bool = False):
+        if not files:
+            return
 
-    out_name = name_out(name)    
-    prog = compiler(extension)
-    
-    cmd = [prog] + cfiles + [f"-I{f}" for f in hfiles] + ["-o", out_name]
+        file_paths = [Path(f) for f in files]
+        
+        if multi:
+            self._handle_multi_compile(file_paths)
+        else:
+            for fp in file_paths:
+                self._handle_single_file(fp)
 
-    if not compile_action(cmd):
-        print("Failed to compile")
-        return None
-    
-    return out_name
+    def _handle_multi_compile(self, paths: List[Path]):
+        sources = [p for p in paths if p.suffix in ('.c', '.cpp', '.cc')]
+        headers = [p for p in paths if p.suffix in ('.h', '.hpp')]
+        
+        if not sources:
+            return
+
+        main_source = sources[0]
+        compiler = "gcc" if main_source.suffix == ".c" else "g++"
+        out_name = self.get_executable_path(main_source)
+        
+        # Build command: compiler sources -Iheaders -o output
+        cmd = [compiler] + [str(s) for s in sources]
+        for h in headers:
+            cmd.append(f"-I{h.parent}")
+        cmd += ["-o", str(out_name)]
+
+        if self.run_command(cmd):
+            self.output_files.append(out_name)
+            self.run_command([f"./{out_name}" if self.is_posix else str(out_name)])
+
+    def _handle_single_file(self, fp: Path):
+        ext = fp.suffix
+        out_name = self.get_executable_path(fp)
+        match ext:
+            case ".py":
+                prog = "python3" if self.is_posix else "python"
+                self.run_command([prog, str(fp)])
+            case ".java":
+                self.run_command(["java", str(fp)])
+            case _:
+                # Compile before run languages
+                if ext in ('.c', '.cpp'):
+                    compiler = "gcc" if ext == ".c" else "g++"
+                    if self.run_command([compiler, str(fp), "-o", str(out_name)]):
+                        self.output_files.append(out_name)
+                        self.run_command([f"./{out_name}" if self.is_posix else str(out_name)])
+                else:
+                    print(f"Unsupported extension: {ext}")
+
+    def cleanup(self):
+        # This will Remove executable file after ran
+        for f in self.output_files:
+            if f.exists():
+                f.unlink()
 
 def main():
-    # Just for exit code
-    error_code = 0
-
-    # Argparse Initialize
-    parser = argparse.ArgumentParser(description="Auto Compile & run")
-    # Argruments
-    parser.add_argument("files", nargs="*", help="Files name need to compile and run")
-    # Option
-    parser.add_argument("-m", "--multi", action="store_true", help="flag to tell compile multi files into a binary")
+    parser = argparse.ArgumentParser(description="Professional Auto Compiler & Runner")
+    parser.add_argument("files", nargs="*", help="Files to compile and run")
+    parser.add_argument("-m", "--multi", action="store_true", help="Compile multiple files into one binary")
     args = parser.parse_args()
-    
-    out_name = None
 
-    # When there is no given filename, This will finally recieve some word
-    # Maybe I will delete this after because it just a bit bother
-    while not args.files:
-        print("No file given, enter file name: ")
-        recieve = None
+    # Interactive input if no files provided
+    if not args.files:
         try:
-            recieve = input()
+            val = input("No file given, enter file names: ").strip()
+            if val: args.files = val.split()
         except EOFError:
-            print("Failed to recieve input")
-            error_code += 1
-            break
-        try:
-            if recieve.split()[0] not in ['\n', '\0', None, '', ' ']:
-                args.files.append(recieve)
-        except IndexError:
-            continue
+            return 1
 
-    # Main Run Function
-    else:
-        if args.multi:
-            out_name = multi_file_compile(args)
-            if out_name:
-               spc.run([out_name])
-            else:
-               error_code += 1
+    runner = CompilerRunner()
+    try:
+        runner.compile_and_run(args.files, args.multi)
+    finally:
+        runner.cleanup()
+    return 0
 
-        else:
-            # This will loop until no file to run
-            for filename in args.files:
-
-                name, extension = os.path.splitext(filename)
-                # Prog Store a Compiler or Inteprenter for Programming Language
-                prog = ""
-                
-                match extension:
-                    # Will check language want to compile first before run
-                    # Then If language don't need to compile or it have a compile & run built-in
-                    # That will be run that tool
-                    
-                    # The C file
-                    case ".c":
-                        out_name = name_out(name)
-                        cmd = ["gcc", filename, "-o", out_name]
-
-                    # The CPP file
-                    case ".cpp":
-                        out_name = name_out(name)
-                        cmd = ["g++", filename, "-o", out_name]
-
-                    case _:
-                        # non-compile or compile and run built-in language
-                        match extension:
-                            # JAVA file
-                            case ".java":
-                                prog = "java"
-                            # Python file
-                            case ".py":
-                                prog = "python3" if os.name == "posix" else "python"
-                            case _:
-                                print("Unknow extension")
-                                error_code += 1
-                                continue
-                        
-                        # Run
-                        if spc.run([prog, filename]).returncode != 0:
-                            error_code += 1
-                        continue
-
-                # Run after compiled
-                if compile_action(cmd):
-                    spc.run([out_name])
-                else:
-                    error_code += 1
-    
-    # Clear compiled package file
-    if out_name != None:
-        spc.run(["rm" if os.name == "posix" else "del", out_name])
-    
-    return error_code
-                        
 if __name__ == "__main__":
-    status = int(main())
-    exit(status)
+    sys.exit(main())
