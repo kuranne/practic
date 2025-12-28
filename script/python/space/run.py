@@ -19,7 +19,7 @@ def compiler(extension):
 
 # I do this for when I use in Windows... , no maybe not. Should I delete this?
 def name_out(name):
-    f"./{name}.out" if os.name == "posix" else f".\{name}.out"
+    return f"./{name}.out" if os.name == "posix" else f".\\{name}.out"
 
 # Complie multi files of c or c++ file
 # Seem like gcc || g++ name name2 -I header -o name.out
@@ -101,12 +101,12 @@ def main():
                     
                     # The C file
                     case ".c":
-                        out_name = f"./{name}.out" if os.name == "posix" else f".\\{name}.out"
+                        out_name = name_out(name)
                         cmd = ["gcc", filename, "-o", out_name]
 
                     # The CPP file
                     case ".cpp":
-                        out_name = f"./{name}.out" if os.name == "posix" else f".\\{name}.out"
+                        out_name = name_out(name)
                         cmd = ["g++", filename, "-o", out_name]
 
                     case _:
@@ -126,7 +126,8 @@ def main():
                         # Run
                         if spc.run([prog, filename]).returncode != 0:
                             error_code += 1
-                            continue
+                        continue
+
                 # Run after compiled
                 if compile_action(cmd):
                     spc.run([out_name])
@@ -135,7 +136,7 @@ def main():
     
     # Clear compiled package file
     if out_name != None:
-        spc.run(["rm", out_name])
+        spc.run(["rm" if os.name == "posix" else "del", out_name])
     
     return error_code
                         
