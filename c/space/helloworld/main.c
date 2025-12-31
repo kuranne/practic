@@ -1,6 +1,6 @@
 #include "hello.h"
 
 int main() {
-    hello();
+    hello(dyin());
     return 0;
 }
