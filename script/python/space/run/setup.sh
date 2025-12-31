@@ -10,4 +10,5 @@ pyinstaller --onefile run.py
 
 # Clear & Clean
 mv ./dist/run .
-rm -rf ./build/ ./dist/ run.spec
+deactivate
+rm -rf ./build/ ./dist/ run.spec ./.venv/

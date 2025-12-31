@@ -15,8 +15,11 @@ pyinstaller --onefile run.py
 if (Test-Path "./dist/run.exe") {
     Move-Item -Path "./dist/run.exe" -Destination "./run.exe" -Force
 }
-Remove-Item -Path "./build", "./dist" -Recurse -ErrorAction SilentlyContinue
-Remove-Item -Path "./run.spec" -ErrorAction SilentlyContinue
+
+deactivate
+
+Remove-Item -Path "./build", "./dist", "./.venv" -Recurse -ErrorAction SilentlyContinue
+Remove-Item -Path "./run.spec" -ErrorAction SilentlyContinuee
 
 #--- Add to PATH ---#
 $currentDir = Get-Location | Select-Object -ExpandProperty Path
