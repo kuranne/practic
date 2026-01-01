@@ -19,7 +19,7 @@ if (Test-Path "./dist/run.exe") {
 deactivate
 
 Remove-Item -Path "./build", "./dist", "./.venv" -Recurse -ErrorAction SilentlyContinue
-Remove-Item -Path "./run.spec" -ErrorAction SilentlyContinuee
+Remove-Item -Path "./run.spec" -ErrorAction SilentlyContinue
 
 #--- Add to PATH ---#
 $currentDir = Get-Location | Select-Object -ExpandProperty Path
