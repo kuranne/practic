@@ -141,6 +141,8 @@ class CompilerRunner:
                 is_lua = spc.run(f"{check_cmd} lua", shell=True, capture_output=True).returncode == 0
                 prog = "lua" if is_lua else "luajit"
                 spc.run([prog, str(fp)])
+            case ".js":
+                spc.run(["node", str(fp)])
             case _ if ext in ('.c', '.cpp', '.cc'):
                 compiler = "gcc" if ext == ".c" else "g++"
                 cmd = [compiler] + self.extra_flags + [str(fp), "-o", str(out_name)]
