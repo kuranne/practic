@@ -8,6 +8,14 @@ import shlex
 from pathlib import Path
 from typing import List, Optional
 
+class Colors:
+    GREEN = '\033[92m'
+    CYAN = '\033[96m'
+    YELLOW = '\033[93m'
+    RED = '\033[91m'
+    RESET = '\033[0m'
+    BOLD = '\033[1m'
+
 class CompilerRunner:
     def __init__(self, flags: str = ""):
         # Platform detection
@@ -32,7 +40,7 @@ class CompilerRunner:
             result = spc.run(cmd, check=False, shell=use_shell)
             return result.returncode == 0
         except FileNotFoundError:
-            print(f"Error: Command '{cmd[0]}' not found.")
+            print(f"{Colors.RED}Error: Command '{cmd[0]}' not found.{Colors.RESET}")
             return False
 
     def find_source_files(self, path: Path, max_depth: int = None) -> List[str]:
@@ -58,12 +66,12 @@ class CompilerRunner:
         if not files: return
         file_paths = [Path(f) for f in files]
         
-        print("--------------")
+        print(f"{Colors.YELLOW}--------------{Colors.RESET}")
         if multi:
             self._handle_multi_compile(file_paths)
         else:
             for fp in file_paths:
-                print(f"\nCurrently --- {fp}")
+                print(f"\n{Colors.CYAN}Current --- {fp}{Colors.RESET}")
                 self._handle_single_file(fp)
 
     # --- Cargo Utilities ---
@@ -112,14 +120,14 @@ class CompilerRunner:
         
         if is_release:
             # Case: Build Release -> Run Binary
-            print("Building release...")
+            print(f"{Colors.CYAN}Building release...{Colors.RESET}")
             build_cmd = ["cargo", "build"] + self.extra_flags
             if not self.run_command(build_cmd):
                 return
             
             pkg_name = self._get_cargo_package_name(toml_path)
             if not pkg_name:
-                print("Error: Could not parse package name from Cargo.toml")
+                print(f"{Colors.RED}Error: Could not parse package name from Cargo.toml{Colors.RESET}")
                 return
 
             bin_name = f"{pkg_name}.exe" if not self.is_posix else pkg_name
@@ -128,7 +136,7 @@ class CompilerRunner:
             if target_bin.exists():
                 self._execute_binary(target_bin)
             else:
-                print(f"Error: Binary not found at {target_bin}")
+                print(f"{Colors.RED}Error: Binary not found at {target_bin}{Colors.RESET}")
         else:
             # Case: Default Run Quiet
             # Note: -q comes before --flags to ensure cargo itself is quiet
@@ -139,7 +147,7 @@ class CompilerRunner:
         cargo_toml = self._find_cargo_toml(fp)
         
         if cargo_toml:
-            print(f"Found Cargo project: {cargo_toml.parent.name}")
+            print(f"{Colors.CYAN}Found Cargo project: {cargo_toml.parent.name}{Colors.RESET}")
             self.run_cargo_mode(cargo_toml)
         else:
             # --- Rustc Mode (Single File) ---
@@ -177,7 +185,7 @@ class CompilerRunner:
                     self.output_files.append(out_name)
                     self._execute_binary(out_name)
             case _:
-                print(f"Unsupported extension: {ext}")
+                print(f"{Colors.RED}Unsupported extension: {ext}{Colors.RESET}")
 
     def _handle_multi_compile(self, paths: List[Path]):
         sources = [p for p in paths if p.suffix in self.c_family_ext]
@@ -201,7 +209,7 @@ class CompilerRunner:
                 self.output_files.append(out_name)
                 self._execute_binary(out_name)
         else:
-            print(f"Unsupported extension for multi: {ext}")
+            print(f"{Colors.RED}Unsupported extension for multi: {ext}{Colors.RESET}")
 
     def _execute_binary(self, bin_path: Path):
         target = str(bin_path) if self.is_posix else str(bin_path.absolute())
@@ -254,9 +262,9 @@ def main():
         depth = args.link_auto if args.link_auto != -1 else None
         src_files = runner.find_source_files(Path("."), max_depth=depth)
         if not src_files:
-            print(f"No C/C++ source files found via -L auto-search (depth={depth}).")
+            print(f"{Colors.RED}No C/C++ source files found via -L auto-search (depth={depth}).{Colors.RESET}")
             return 1
-        print(f"Auto-found {len(src_files)} source files: {src_files}")
+        print(f"{Colors.GREEN}Auto-found {len(src_files)} source files: {src_files}{Colors.RESET}")
         try:
             runner.compile_and_run(src_files, multi=True)
         finally:
@@ -271,7 +279,7 @@ def main():
 
     # 4. No files, No Cargo -> Fallback to Input
     try:
-        val = input("No file given, enter file(s) name: ").strip()
+        val = input(f"{Colors.YELLOW}No file given, enter file(s) name: {Colors.RESET}").strip()
         if val: 
             args.files = shlex.split(val)
             runner.compile_and_run(args.files, args.multi)
@@ -283,4 +291,6 @@ def main():
     return 0
 
 if __name__ == "__main__":
-    sys.exit(main())
+    exit_code = main()
+    print()
+    sys.exit(exit_code)

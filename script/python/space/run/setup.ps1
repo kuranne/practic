@@ -1,10 +1,14 @@
 #--- Python Setup ---#
+Write-Host "Checking for python..." -ForegroundColor Cyan
 if (!(Get-Command python -ErrorAction SilentlyContinue)) {
     Write-Error "Can't execute python"; exit 1
 }
+
+Write-Host "Setting up virtual environment..." -ForegroundColor Cyan
 python -m venv .venv 
 & .\.venv\Scripts\Activate.ps1
 
+Write-Host "Installing requirements..." -ForegroundColor Cyan
 pip install -r requirements.txt
 
 #--- Compile?? ---#
@@ -29,3 +33,5 @@ if ($userPath -split ';' -notcontains $currentDir) {
     $newPath = "$userPath;$currentDir".TrimStart(';')
     [Environment]::SetEnvironmentVariable("Path", $newPath, "User")
 }
+
+Write-Host "Setup complete!" -ForegroundColor Green
