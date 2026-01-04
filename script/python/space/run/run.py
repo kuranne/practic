@@ -10,8 +10,14 @@ from typing import List, Optional
 
 class CompilerRunner:
     def __init__(self, flags: str = ""):
+        # Platform detection
         self.is_posix = os.name == "posix"
+        
+        # Initialize
         self.output_files: List[Path] = []
+        self.c_family_header_ext = {'.h', '.hpp'}
+        self.c_family_ext = {'.c', '.cpp', '.cc'}
+
         # Clean flags extra '' and ""
         clean_flags = flags.strip().strip('"').strip("'")
         self.extra_flags = shlex.split(clean_flags) if clean_flags else []
@@ -29,14 +35,35 @@ class CompilerRunner:
             print(f"Error: Command '{cmd[0]}' not found.")
             return False
 
+    def find_source_files(self, path: Path, max_depth: int = None) -> List[str]:
+        """Recursively find c/c++ source files with optional max depth"""
+        files = []
+        
+        # 0 means just the current directory (no recursion into subdirs)
+        # 1 means current + 1 level deep
+        
+        start_level = len(path.absolute().parts)
+        
+        for p in path.rglob("*"):
+            if max_depth is not None:
+                current_level = len(p.parent.absolute().parts)
+                if current_level - start_level > max_depth:
+                    continue
+                
+            if p.is_file() and p.suffix in self.c_family_ext:
+                files.append(str(p))
+        return files
+
     def compile_and_run(self, files: List[str], multi: bool = False):
         if not files: return
         file_paths = [Path(f) for f in files]
         
+        print("--------------")
         if multi:
             self._handle_multi_compile(file_paths)
         else:
             for fp in file_paths:
+                print(f"\nCurrently --- {fp}")
                 self._handle_single_file(fp)
 
     # --- Cargo Utilities ---
@@ -143,7 +170,7 @@ class CompilerRunner:
                 spc.run([prog, str(fp)])
             case ".js":
                 spc.run(["node", str(fp)])
-            case _ if ext in ('.c', '.cpp', '.cc'):
+            case _ if ext in self.c_family_ext:
                 compiler = "gcc" if ext == ".c" else "g++"
                 cmd = [compiler] + self.extra_flags + [str(fp), "-o", str(out_name)]
                 if self.run_command(cmd):
@@ -153,14 +180,14 @@ class CompilerRunner:
                 print(f"Unsupported extension: {ext}")
 
     def _handle_multi_compile(self, paths: List[Path]):
-        sources = [p for p in paths if p.suffix in ('.c', '.cpp', '.cc')]
-        headers = [p for p in paths if p.suffix in ('.h', '.hpp')]
+        sources = [p for p in paths if p.suffix in self.c_family_ext]
+        headers = [p for p in paths if p.suffix in self.c_family_header_ext]
         if not sources: return
 
         main_source = sources[0]
         ext = main_source.suffix.lower()
 
-        if ext in ('.c', '.cpp', '.cc'):
+        if ext in self.c_family_ext:
             compiler = "gcc" if ext == ".c" else "g++"
             out_name = self.get_executable_path(main_source)
 
@@ -195,6 +222,7 @@ def main():
     parser = argparse.ArgumentParser(description="Professional Auto Compiler & Runner")
     parser.add_argument("files", nargs="*", help="Files to compile and run")
     parser.add_argument("-m", "--multi", action="store_true", help="Compile multi-files")
+    parser.add_argument("-L", "--link-auto", nargs="?", const=-1, type=int, help="Auto find and link C/C++ files. Optional depth arg (default: infinite)")
     parser.add_argument("-f", "--flags", type=str, default="", help='Compiler flags')
     
     # Process -f-flags without space
@@ -220,15 +248,30 @@ def main():
             runner.cleanup()
         return 0
 
-    # 2. No files provided -> Check for implicit Cargo Project
+    # 2. Check for -L auto-link mode
+    # If -L is present, args.link_auto will be either -1 (if no value provided) or the int value
+    if args.link_auto is not None:
+        depth = args.link_auto if args.link_auto != -1 else None
+        src_files = runner.find_source_files(Path("."), max_depth=depth)
+        if not src_files:
+            print(f"No C/C++ source files found via -L auto-search (depth={depth}).")
+            return 1
+        print(f"Auto-found {len(src_files)} source files: {src_files}")
+        try:
+            runner.compile_and_run(src_files, multi=True)
+        finally:
+            runner.cleanup()
+        return 0
+
+    # 3. No files provided -> Check for implicit Cargo Project
     if Path("Cargo.toml").exists():
         # Auto-detect cargo project
         runner.run_cargo_mode(Path("Cargo.toml"))
         return 0
 
-    # 3. No files, No Cargo -> Fallback to Input
+    # 4. No files, No Cargo -> Fallback to Input
     try:
-        val = input("No file given, enter file names: ").strip()
+        val = input("No file given, enter file(s) name: ").strip()
         if val: 
             args.files = shlex.split(val)
             runner.compile_and_run(args.files, args.multi)
