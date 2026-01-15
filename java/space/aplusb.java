@@ -1,12 +1,23 @@
-import java.util.Scanner;
+import func.io.FastInput;
+import java.io.BufferedOutputStream;
+import java.io.PrintWriter;
 
-public class aplusb {
+public class AplusB {
+    private static final FastInput in = new FastInput(System.in);
+    private static final PrintWriter out = new PrintWriter(new BufferedOutputStream(System.out));
+
     public static void main(String[] args) {
-        Scanner jvin = new Scanner(System.in);
+        out.printf("\na: ");
+        out.flush();
 
-        int variable_a = jvin.nextInt(), variable_b = jvin.nextInt();
-        jvin.close();
+        int a = in.nextInt();
 
-        System.out.printf("Ans is : %d" + "\n", variable_a + variable_b);
+        out.printf("\nb: ");
+        out.flush();
+
+        int b = in.nextInt();
+
+        out.printf("\na + b = %d\n", a + b);
+        out.flush();
     }
 }

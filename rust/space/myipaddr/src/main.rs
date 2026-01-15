@@ -1,5 +1,5 @@
 use serde::Deserialize;
-use std::{error::Error, io::{Write, stdout}, process::Command, thread::sleep, time::Duration};
+use std::{error::Error};
 
 #[allow(unused)]
 #[derive(Debug, Deserialize)]
@@ -16,7 +16,7 @@ impl Default for MyIP {
 }
 
 #[tokio::main]
-async fn fetch(myip: &mut MyIP, url: &String) -> Result<(), reqwest::Error> {
+async fn request_api(myip: &mut MyIP, url: &String) -> Result<(), reqwest::Error> {
     *myip = reqwest::get(url)
         .await?
         .json()
@@ -27,23 +27,15 @@ async fn fetch(myip: &mut MyIP, url: &String) -> Result<(), reqwest::Error> {
 
 fn main() -> Result<(), Box<dyn Error>> {
     let mut myip: MyIP = MyIP::default();
-    let url: String = "https://api.myip.com".to_string();
+    let ip_url: String = "https://api.myip.com".to_string();
+    let libre_speedtest_url: String = "https://librespeed.org/backend".to_string();
 
-    print!("requesting to {}", url);
-    stdout().flush()?;
-    for _ in 0..3 {
-        print!(".");
-        stdout().flush()?;
-        sleep(Duration::from_millis(750));
-    }
-
-    let mut child = Command::new("sleep").arg("2").spawn()?;
-    child.wait()?;
-
-    match fetch(&mut myip, &url) {
-        Ok(()) => println!("\rYour ip is {}, in {}.", myip.ip, myip.country),
+    match request_api(&mut myip, &ip_url) {
+        Ok(()) => (),
         Err(e) => eprintln!("\rFailed to get api due to {e}")
     }
+
+
 
     Ok(())
 }
