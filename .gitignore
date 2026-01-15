@@ -12,6 +12,8 @@ Thumbs.db
 .vscode/
 .git/
 .tool-versions #asdf
+.run_cache/
+Run.toml
 
 #--- Python ---#
 .venv/
