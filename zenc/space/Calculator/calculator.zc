@@ -1,0 +1,23 @@
+@derive(Debug)
+struct Calculator {
+    a: int,
+    b: int
+}
+
+impl Calculator { 
+    fn add(self) -> int {
+        return self.a + self.b
+    }
+    fn del(self) -> int {
+        return self.a - self.b
+    }
+    fn multi(self) -> int {
+        return self.a * self.b
+    }
+    fn div(self) -> int {
+        return self.a / self.b
+    }
+    fn mod(self) -> int {
+        return self.a % self.b
+    }
+}
