@@ -1,0 +1,6 @@
+import "calculator.zc"
+
+fn main() {
+    var calcu = Calculator {a: 1, b: 2}
+    println "{calcu.multi()}"
+}

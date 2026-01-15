@@ -1,0 +1,12 @@
+fn main() {
+    var n: int = atoi(readln())
+    println "{factorial(n)}"
+}
+
+fn factorial(num: int) -> int {
+    if num >= 1 {
+        return factorial(num - 1) * num
+    } else {
+        return 1
+    }
+}

@@ -1,0 +1,4 @@
+fn main() {
+    var name = ? "What is your name? " // This is not work yet for me. Jan 15, 2026
+    println "Hello {name}, nice to meet you!" // This is always has some warning like warning: expression result unused [-Wunused-value] (Same day with above)
+}
