@@ -1,0 +1,13 @@
+#include "swap_values.h"
+#include <stdio.h>
+
+fn main() {
+    var a: int;
+    var b: int;
+
+    scanf("%d %d", &a, &b);
+    
+    swap_values(a, b);
+    "a: {a}, b: {b}";
+    return 0
+}
