@@ -1,6 +1,10 @@
 import "calculator.zc"
 
 fn main() {
-    var calcu = Calculator {a: 1, b: 2}
+    var calcu = Calculator {
+        a: atoi(readln()), 
+        b: atoi(readln())
+    }
+    
     println "{calcu.multi()}"
 }

@@ -1,47 +1,54 @@
-use std::io;
+use core::num;
+use std::{error::Error, io::{self, BufRead}};
 
-fn input() -> String {
-    let mut buf = String::new();
-    io::stdin().read_line(&mut buf).unwrap();
-    buf
+#[allow(unused)]
+enum ReadMode {
+    Line,
+    All
 }
 
-fn main() {
-    let mut sol: Solution = Solution::default();
-    while let val = input().trim().to_string() && val != String::from("") {
-        sol.nums.push(val.parse::<i32>().unwrap());
-    }
-    sol.target = input()
-        .trim()
-        .parse()
-        .unwrap();
+fn rsin(mode: ReadMode, stdin: &mut impl BufRead, buf: &mut String) -> Result<(), Box<io::Error>>{
+    buf.clear();
+    match mode {
+        ReadMode::All => stdin.read_to_string(buf)?,
+        ReadMode::Line => stdin.read_line(buf)?
+    };
+    Ok(())
+}
+
+fn main() -> Result<(), Box<dyn Error>> {
+    let mut stdin = io::stdin().lock();
+    let mut buf = String::with_capacity(128);
     
-    println!("{}", sol.two_sum().iter().map(|x| x.to_string()).collect::<Vec<String>>().join(" "));
+    match rsin(ReadMode::All, &mut stdin, &mut buf) {
+        Ok(()) => (),
+        Err(e) => eprintln!("{e}")
+    }
+
+    let numbers: Vec<i32> = buf
+        .split_whitespace()
+        .map(|x| x.parse::<i32>())
+        .collect::<Result<Vec<i32>, num::ParseIntError>>()?;
+
+    if let Some(target) = numbers.last() {
+        println!("{:?}", Solution::two_sum(numbers[0..numbers.len()-1].to_vec(), *target))
+    }
+
+    Ok(())
 }
 
 #[derive(Debug)]
-struct Solution {
-    nums: Vec<i32>,
-    target: i32
-}
-
-impl Default for Solution {
-    fn default() -> Self {
-        Solution { nums: Vec::new(), target: 0 }
-    }
-}
+struct Solution;
 
 impl Solution {
-    pub fn two_sum(&mut self) -> Vec<i32> {
-        let mut ans: Vec<i32> = Vec::with_capacity(2);
-        'outer: for i in 0..self.nums.len() {
-            for j in 0..i {
-                if self.nums[i] + self.nums[j] == self.target {
-                    ans = vec![j as i32, i as i32];
-                    break 'outer; 
+    pub fn two_sum(nums: Vec<i32>, target: i32) -> Vec<i32> {
+        for i in 0..nums.len() {
+            for j in i + 1..nums.len() {
+                if i != j && nums[i] + nums[j] == target {
+                    return vec![i as i32, j as i32]
                 }
             }
         }
-        ans
+        vec![-1, -1]
     }
 }
