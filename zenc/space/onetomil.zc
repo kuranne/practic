@@ -1,0 +1,15 @@
+#include <stdio.h>
+
+fn main() {
+    var n = 1000;
+    var f = fopen("foo.txt", "w");
+
+    for i in 0..n + 1 step 2 {
+        fprintf(f, "%d\n", i)
+    }
+
+    "Done!";
+
+    defer fclose(f);
+    return 0
+}

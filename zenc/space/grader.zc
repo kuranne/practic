@@ -1,0 +1,45 @@
+struct Score {
+collected: int;
+    midterm: int;
+    final: int;
+}
+
+impl Score {
+    fn sum_score(self) -> int {
+        return self.collected + self.midterm + self.final;
+    }
+}
+
+struct Grader;
+impl Grader {
+    fn calc_grade(score: int) -> string {
+        match score {
+            80..101 => return "A"
+            75..80  => return "B+"
+            70..75  => return "B"
+            65..70  => return "C+"
+            60..65  => return "C"
+            55..60  => return "D+"
+            50..55  => return "D"
+            _       => return "F"
+        }
+    }
+}
+
+fn main() {
+    var c: int;
+    var m: int;
+    var f: int;
+
+    ? "Enter Collected Score: " (c);
+    ? "Enter Midterm Score: " (m);
+    ? "Enter Final Score: " (f);
+
+    var student = Score {
+        collected: c,
+        midterm: m,
+        final: f
+    };
+
+    "Grade: {Grader.calc_grade(student.sum_score())}";
+}
