@@ -1,4 +1,0 @@
-fn main() {
-    var name = ? "What is your name? ";
-    "Hello {name}, nice to meet you!";
-}

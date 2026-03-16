@@ -1,0 +1,14 @@
+include <stdio.h>
+
+fn add<T>(a: T, b: T) -> T {
+    return a + b
+}
+
+fn main() {
+    let a: float
+    let b: float
+
+    scanf("%f %f", &a, &b)
+
+    println "{add<float>(a, b)}"
+}
