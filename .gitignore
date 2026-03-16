@@ -13,7 +13,6 @@ Thumbs.db
 .git/
 .tool-versions #asdf
 .run_cache/
-Run.toml
 
 #--- Python ---#
 .venv/
