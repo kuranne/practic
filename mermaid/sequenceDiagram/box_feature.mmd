@@ -1,0 +1,16 @@
+sequenceDiagram
+    actor User
+
+    %% Block Of Cloud Service
+    box Server
+    participant API as Application Programming Interface
+    participant DB as Data Base
+    end
+
+
+    %% diagram
+    User ->> +API : Reqwest Data
+    API ->> +DB : Query
+    DB -->> -API : Sent
+    API -->> -User : Get
+

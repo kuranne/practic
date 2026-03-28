@@ -1,0 +1,54 @@
+---
+title : Node
+htmlLable : false
+---
+flowchart LR
+
+    normal[This is a text box]
+    
+    unicode["unicode 🫪"]
+    
+    markdown["`**bold** _italic_`"]
+    
+    newline["`
+    New
+    Line
+    `"]
+
+    roundbox(round box)
+
+    more_round_box([round round box])
+
+    sub_routine[[sub progress]]
+
+    data[(data base)]
+
+    circle((circle))
+
+    tribox>asymmetric]
+
+    square{rhombus}
+
+    %% Text Format
+    text --> normal
+    text --> unicode
+    text --> markdown
+    text --> newline
+
+    %% Shape
+    shape --> roundbox
+    shape --> more_round_box
+    shape --> sub_routine
+    shape --> data
+    shape --> circle
+    shape --> tribox
+    shape --> square
+
+    %% Line
+    A --> B
+    A --- B
+    A -.-> B
+    A <--> B
+    A ==> B
+    A -->|to| B
+

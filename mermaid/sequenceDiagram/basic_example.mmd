@@ -1,0 +1,11 @@
+sequenceDiagram
+    %% Initailize
+    actor User
+    participant Auth as Authenticator Service
+    participant DB as Data Base
+
+    %% Diagram
+    User ->> Auth : Fill Username & Password
+    Auth ->> DB : Check the Username & Password
+    DB -->> Auth : All Correct
+    Auth -->> User : Welcome

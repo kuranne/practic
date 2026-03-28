@@ -1,0 +1,30 @@
+erDiagram
+    CUSTOMER ||..o{ ORDER : "place"
+    ORDER ||--|{ LINE-ITEM : "contains"
+    PRODUCT ||--o{ LINE-ITEM : "ordered-in"
+
+    CUSTOMER {
+        int customer_id PK
+        string name
+    }
+
+    ORDER {
+        int order_number PK
+        int customer_id FK
+        date delivery_date
+    }
+
+    LINE-ITEM {
+        int line_id PK
+        int order_number FK
+        int quantity
+        float price
+    }
+    
+    PRODUCT {
+        int product_id PK
+        string name
+        float price
+    }
+
+

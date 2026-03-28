@@ -1,0 +1,12 @@
+stateDiagram-v2
+    state "Traffic Light" as TF
+    state "Immerdaitly Stop" as IS
+
+    state TF <<choice>>
+    [*] --> TF
+    TF --> GO : Green
+    TF --> STOP : Yello
+    TF --> IS : Red
+    STOP --> IS : wait red
+    IS --> TF : wait green
+    GO --> [*]

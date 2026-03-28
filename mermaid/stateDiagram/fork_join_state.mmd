@@ -1,0 +1,18 @@
+stateDiagram-v2
+    state "Fork State" as FS
+    state "Join State" as JS
+
+    state FS <<fork>>
+    state JS <<join>>
+
+    [*] --> Initilize
+    Initilize --> FS
+    FS --> Coding
+    FS --> Docing
+    FS --> Databasing
+
+    Coding --> JS
+    Docing --> JS
+    Databasing --> JS
+
+    JS --> [*]
