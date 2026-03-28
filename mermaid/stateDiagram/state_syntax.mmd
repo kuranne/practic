@@ -1,0 +1,9 @@
+stateDiagram-v2
+    state "Washing Machine" as WA {
+        [*] --> Washing
+        Washing --> Cleaning
+        Cleaning --> Drying
+    }
+    %% Sequence
+    [*] --> WA : uses
+    WA --> [*] : finish

@@ -1,0 +1,18 @@
+classDiagram
+    Vehicle <|-- Car : Car is in Vehicle
+    Engine --> Fuel : Engine Use Fuel
+    Car *-- Engine : Car must have Engine
+    Car o-- Driver : Nice to have Driver
+    Driver ..> GPS : Driver Use GPS
+    
+    class Vehicle {
+        +start() void
+    }
+
+    class Car {
+        +drive() void
+    }
+
+    class Engine {
+        +ignite() void
+    }

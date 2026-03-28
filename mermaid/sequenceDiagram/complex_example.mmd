@@ -1,0 +1,26 @@
+sequenceDiagram
+    actor C as Customer
+    box Cafe
+        participant B as Barista
+        participant CM as Coffee Machine
+    end
+
+    %% Diagram
+    C ->> B : Order a menu
+    B ->> +CM : Make a coffee
+
+    %% Coffee Making
+    loop Making
+        CM ->> CM : Control tempurator
+    end
+
+    CM -->> -B : Finishing Caf
+
+    %% Latte or Americano
+    B -->> +C : Question
+    C -->> +B : Answer
+    alt Milk Cafe
+        B -->> C : Serve Latte
+    else Non-Milk
+        B -->> C : Serve Americano
+    end
