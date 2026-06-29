@@ -1,46 +1,37 @@
+# 1. Ignore all files by default (to ignore compiled binaries without extension)
 *
+
+# 2. Re-include all directories so Git can traverse them
 !*/
+
+# 3. Re-include all files with extensions (containing a dot)
 !*.*
 
-#--- System ---#
-# OSX
-.DS_STORE
-# NT
-Thumbs.db
-
-#--- tool ---#
-.vscode/
-.git/
-.tool-versions #asdf
-.run_cache/
-
-#--- Python ---#
+# 4. Explicitly ignore build/dependency/IDE directories so Git NEVER enters them
+# (These must be defined AFTER `!*/` to override the directory re-inclusion)
+node_modules/
+target/
 .venv/
+.gradle/
 build/
 dist/
+.vscode/
+.idea/
+.run_cache/
 
-#--- Java ---#
-.class
-
-#--- executeable ---#
+# --- Other Ignored Patterns ---
+.DS_Store
+.DS_STORE
+Thumbs.db
+.tool-versions
+*.class
+*.o
 *.exe
 *.app
 *.out
-
-#--- Temporary ---#
 *.log
 *.tmp
-
-#--- Private ---#
 private_*
-
-#--- Rust ---#
-target/
-Cargo.lock
-
-#--- C ---#
 *.dSYM/
-
-# gsc Script
 .gsc.config
-.idea/
+Cargo.lock

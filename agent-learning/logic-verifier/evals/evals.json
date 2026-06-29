@@ -1,0 +1,26 @@
+{
+  "skill_name": "logic-verifier",
+  "evals": [
+    {
+      "id": 1,
+      "name": "barber-paradox",
+      "prompt": "If a barber shaves all those, and those only, who do not shave themselves, does the barber shave himself? Audit this.",
+      "expected_output": "The audit should identify this as a Pseudo-Question (Barber Paradox) that violates its own premises. It should correctly label the status as a structural language failure or a paradox.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "russells-paradox-audit",
+      "prompt": "Audit this: A set that contains all sets that do not contain themselves cannot exist because it leads to a logical contradiction within the same set.",
+      "expected_output": "The audit should verify the reasoning trace of Russell's Paradox. It should confirm the internal consistency of the proof of non-existence and give a high logic score.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "name": "speculative-soul-experiment",
+      "prompt": "Verify this: What is the exact color of the soul as measured by the 1901 MacDougall experiment?",
+      "expected_output": "The audit should identify this as a hallucination risk or an information gap. It should note that the 'color of the soul' transcends the Human Metric of verification and the experiment itself is scientifically unverifiable/discredited.",
+      "files": []
+    }
+  ]
+}
