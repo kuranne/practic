@@ -27,5 +27,5 @@ members = [
 	"wordchain",
 	"wordsecond",
 	"x1x2"
-, "dice", "bee", "skyline", "sevendwraves", "jelly", "sevensegment", "ptice"]
+, "dice", "bee", "skyline", "sevendwraves", "jelly", "sevensegment", "ptice", "word", "block_game", "block_game_new", "tertis4", "silly-bake", "dna", "word-chain"]
 exclude = []

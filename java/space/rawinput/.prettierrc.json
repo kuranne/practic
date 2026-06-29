@@ -1,0 +1,9 @@
+{
+    "plugins": ["prettier-plugin-java"],
+    "tabWidth": 4,
+    "useTabs": false,
+    "trailingComma": "none",
+    "bracketSpacing": true,
+    "singleQuote": false,
+    "semi": true
+}
