@@ -1,5 +1,0 @@
-[runner]
-c = "zig"
-
-[preset.build]
-c = "cc"

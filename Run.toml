@@ -1,5 +1,0 @@
-[language.csharp]
-extensions = [".cs"]
-runner = "dotnet"
-subcommand = "run"
-type = "interpreter"
