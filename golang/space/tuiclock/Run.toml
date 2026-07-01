@@ -1,6 +1,0 @@
-[language.go]
-extensions = [".go"]
-runner = "go"
-subcommand = "run"
-type = "interpreter"
-

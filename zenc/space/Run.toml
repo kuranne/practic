@@ -1,5 +1,0 @@
-[language.zenc]
-extensions = [".zc"]
-runner = "zc"
-type = "compiler"
-flags = ["--cc", "zig"]
