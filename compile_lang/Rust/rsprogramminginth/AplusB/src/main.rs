@@ -6,8 +6,8 @@ fn rsin() -> i32 {
     return rsin.trim().parse().unwrap();
 }
 
-fn main(){
+fn main() {
     let a = rsin();
     let b = rsin();
-    println!("{}", a+b);
+    println!("{}", a + b);
 }
