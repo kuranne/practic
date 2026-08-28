@@ -1,0 +1,26 @@
+@startuml
+
+' Variable
+actor "User" as u
+participant "Frontend" as fe 
+participant "Backend" as be 
+database "Database" as db 
+
+' Graph
+loop
+u -> fe: Login Request
+fe -> be ++: POST /api
+be -> db ++: Query
+
+alt Good
+db -> be --: 200
+be -> fe --: Json response
+else Bad 
+db -> be --: 404
+be -> fe --: Not found
+end
+
+fe -> u: Render
+end
+
+@enduml

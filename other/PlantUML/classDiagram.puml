@@ -1,0 +1,62 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+interface PaymentMethod {
+    +pay(amount: double): boolean
+}
+
+interface Item {
+    +id: int 
+    +name: String 
+    +status: boolean
+}
+
+abstract class User {
+    #id: int 
+    #username: String 
+    #email: String 
+    +login(): boolean
+    +logout(): void 
+    {abstract} +getrole(): String 
+}
+
+class Customer {
+    +order: Order 
+    +getrole(): String 
+}
+
+class Admin {
+    -permission: List<String>
+    +getrole(): String 
+    +ban(userID: int): void
+    +ban(username: String, email: String)
+}
+
+class OrderItem {
+    +quantity: int 
+    +price: double
+}
+
+class Order {
+    -id: int
+    #cart: List<OrderItem>
+    #status: boolean
+    +total: double
+}
+
+class CreditCard {
+    -number: String 
+    -cvv: String 
+    +pay(amount: double): boolean
+}
+
+User <|-- Customer 
+User <|-- Admin
+Item <|-- OrderItem
+PaymentMethod <|.. CreditCard
+
+Customer --> Order
+Order *-- OrderItem : contains
+Order ..> PaymentMethod
+
+@enduml
