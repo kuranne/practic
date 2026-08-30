@@ -1,0 +1,19 @@
+sequenceDiagram
+    actor u as User
+    participant fe as Front End
+    participant be as Back End
+    participant db as Data Base
+
+    u ->> +fe: Send Login Request
+    fe ->> +be: API Calling
+
+    be ->> +db: Query
+
+    alt Found
+    db ->> be: Approve
+    else Not Found
+    db ->> be: Reject
+    end
+
+    be ->> -fe: API Response
+    fe ->> -u: Return Result
