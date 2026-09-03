@@ -1,5 +1,5 @@
 @startuml
-skinparam classAttributeIconSize 0
+hide circle
 
 interface PaymentMethod {
     +pay(amount: double): boolean
