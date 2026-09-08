@@ -35,3 +35,6 @@ private_*
 *.dSYM/
 .gsc.config
 Cargo.lock
+.env*
+*prettierrc*
+package-lock.json

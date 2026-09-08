@@ -1,0 +1,17 @@
+public class Multitheading {
+    public static void main(String[] args) {
+
+        Thread thread1 = new Thread(new MyThreading("Alice"));
+        Thread thread2 = new Thread(new MyThreading("Bob"));
+
+        thread1.start();
+        thread2.start();
+
+        try {
+            thread1.join();
+            thread2.join();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+}
